@@ -1,0 +1,90 @@
+Test: Lots of forgetting ...
+-- 0 -- Starting proposal loop for Seq: 6 with majorityCount: 2
+-- 0 -- Sending propose 4 to 3 peers
+-- 1 -- Starting proposal loop for Seq: 8 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+write unix @->/var/tmp/824-1000/px-18006-manygc-2: write: broken pipe
+-- 1 -- Starting proposal loop for Seq: 1 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+-- 2 -- Starting proposal loop for Seq: 12 with majorityCount: 2
+-- 2 -- Sending propose 6 to 3 peers
+-- 0 -- Starting proposal loop for Seq: 16 with majorityCount: 2
+-- 0 -- Sending propose 4 to 3 peers
+-- 0 -- Starting proposal loop for Seq: 15 with majorityCount: 2
+-- 0 -- Sending propose 4 to 3 peers
+-- 0 -- Sent propose. Got back 3 Oks
+-- 0 -- Sending accept n: 4, v: 5751776211841778805 to 3 peers
+-- 0 -- Starting proposal loop for Seq: 9 with majorityCount: 2
+-- 0 -- Sending propose 4 to 3 peers
+-- 1 -- Starting proposal loop for Seq: 4 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+-- 2 -- Starting proposal loop for Seq: 10 with majorityCount: 2
+-- 2 -- Sending propose 6 to 3 peers
+unexpected EOF
+-- 0 -- Sent propose. Got back 2 Oks
+-- 0 -- Sending accept n: 4, v: 5600924393587988459 to 3 peers
+-- 1 -- Sent propose. Got back 2 Oks
+-- 1 -- Sending accept n: 5, v: 6842348953158377901 to 3 peers
+-- 1 -- Sent propose. Got back 3 Oks
+-- 1 -- Sending accept n: 5, v: 6296367092202729479 to 3 peers
+-- 1 -- Calling accept for Seq: 1 on peer: 1 with N: 5 and V: 6296367092202729479
+-- 1 -- Finished calling acceptor on peer: 1. Reply Fail = false
+-- 2 -- Starting proposal loop for Seq: 14 with majorityCount: 2
+-- 2 -- Sending propose 6 to 3 peers
+-- 0 -- Sent propose. Got back 3 Oks
+-- 0 -- Sending accept n: 4, v: 6789034556239763083 to 3 peers
+-- 2 -- Sent propose. Got back 3 Oks
+-- 2 -- Sending accept n: 6, v: 3778061770029050113 to 3 peers
+-- 2 -- Calling accept for Seq: 14 on peer: 2 with N: 6 and V: 3778061770029050113
+-- 2 -- Finished calling acceptor on peer: 2. Reply Fail = false
+unexpected EOF
+-- 1 -- Starting proposal loop for Seq: 2 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+-- 0 -- Starting proposal loop for Seq: 3 with majorityCount: 2
+-- 0 -- Sending propose 4 to 3 peers
+-- 2 -- Sent propose. Got back 3 Oks
+-- 2 -- Sending accept n: 6, v: 3627100269752912500 to 3 peers
+-- 2 -- Calling accept for Seq: 10 on peer: 2 with N: 6 and V: 3627100269752912500
+-- 0 -- Calling accept for Seq: 10 on peer: 0 with N: 6 and V: 3627100269752912500
+-- 0 -- Finished calling acceptor on peer: 0. Reply Fail = false
+-- 1 -- Calling accept for Seq: 6 on peer: 1 with N: 4 and V: 5600924393587988459
+-- 1 -- Finished calling acceptor on peer: 1. Reply Fail = false
+-- 1 -- Calling accept for Seq: 8 on peer: 1 with N: 5 and V: 6842348953158377901
+-- 1 -- Finished calling acceptor on peer: 1. Reply Fail = false
+unexpected EOF
+-- 0 -- Starting proposal loop for Seq: 18 with majorityCount: 2
+-- 0 -- Sending propose 4 to 3 peers
+unexpected EOF
+-- 0 -- Sent propose. Got back 3 Oks
+-- 0 -- Sending accept n: 4, v: 3784560248718450071 to 3 peers
+-- 0 -- Calling accept for Seq: 18 on peer: 0 with N: 4 and V: 3784560248718450071
+-- 0 -- Finished calling acceptor on peer: 0. Reply Fail = false
+-- 1 -- Starting proposal loop for Seq: 0 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+-- 0 -- Calling accept for Seq: 16 on peer: 0 with N: 4 and V: 5751776211841778805
+-- 0 -- Finished calling acceptor on peer: 0. Reply Fail = false
+-- 2 -- Calling accept for Seq: 16 on peer: 2 with N: 4 and V: 5751776211841778805
+-- 2 -- Finished calling acceptor on peer: 2. Reply Fail = false
+-- 1 -- Calling accept for Seq: 16 on peer: 1 with N: 4 and V: 5751776211841778805
+-- 1 -- Finished calling acceptor on peer: 1. Reply Fail = false
+-- 0 -- Calling accept for Seq: 14 on peer: 0 with N: 6 and V: 3778061770029050113
+-- 0 -- Finished calling acceptor on peer: 0. Reply Fail = false
+-- 0 -- Sent propose. Got back 2 Oks
+-- 0 -- Sending accept n: 4, v: 1601692462255737514 to 3 peers
+-- 0 -- Calling accept for Seq: 9 on peer: 0 with N: 4 and V: 1601692462255737514
+-- 0 -- Finished calling acceptor on peer: 0. Reply Fail = false
+-- 1 -- Starting proposal loop for Seq: 17 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+-- 0 -- Sent propose. Got back 3 Oks
+-- 0 -- Sending accept n: 4, v: 2873287401706343734 to 3 peers
+-- 0 -- Calling accept for Seq: 3 on peer: 0 with N: 4 and V: 2873287401706343734
+-- 0 -- Finished calling acceptor on peer: 0. Reply Fail = false
+-- 1 -- Calling accept for Seq: 10 on peer: 1 with N: 6 and V: 3627100269752912500
+-- 1 -- Finished calling acceptor on peer: 1. Reply Fail = false
+-- 1 -- Starting proposal loop for Seq: 13 with majorityCount: 2
+-- 1 -- Sending propose 5 to 3 peers
+-- 2 -- Calling accept for Seq: 8 on peer: 2 with N: 5 and V: 6842348953158377901
+2021/02/07 18:28:01 -- 2 -- Acceptor data for Seq: 8 was not found!!!
+-- 1 -- Sent propose. Got back 3 Oks
+exit status 1
+FAIL	_/mnt/d/S2021/Research/MIT-6.824/src/paxos	3.183s

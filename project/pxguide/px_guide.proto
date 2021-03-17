@@ -1,0 +1,69 @@
+syntax = "proto3"; 
+
+option go_package = "wcl.com/simulation/pxguide";
+option java_multiple_files = true;
+option java_package = "com.wcl.simulation.pxguide";
+option java_outer_classname = "PxGuideProto"; 
+
+package pxguide; 
+
+/**
+Server API:
+	Start() response: (ok bool)
+	Prepare(n int) response: (ok bool, n int, n_a int, v_a interface{})
+	Accept(n int, v interface{}) response: (ok bool, n int)
+	Decided(v interface{}) response: (ok bool)
+*/
+
+
+// Interface exported by the paxos server
+service PxGuide {
+  rpc Start(StartArgs) returns (StartReply) {}
+
+  rpc Prepare(PrepareArgs) returns (PrepareReply) {}
+
+  rpc Accept(AcceptArgs) returns (AcceptReply) {}
+
+  rpc Decided(DecidedArgs) returns (DecidedReply) {}
+  // rpc Do(DecidedArgs) returns (DecidedReply) {}
+}
+
+
+/* ------ Argument Types ------ */
+
+message StartArgs {}
+
+message PrepareArgs {
+  int32 N = 1; 
+}
+
+message AcceptArgs {
+  int32 N = 1;
+  string V = 2;
+}
+
+message DecidedArgs {
+  string V = 1; 
+}
+
+/* ------ Reply Types ------*/
+
+message StartReply {
+  bool Ok = 1; 
+}
+
+message PrepareReply {
+  bool Ok = 1;
+  int32 N = 2;
+  int32 Na = 3;
+  string Va = 4;
+}
+
+message AcceptReply {
+  bool Ok = 1;
+  int32 N = 2;
+}
+
+message DecidedReply {
+  bool Ok = 1; 
+}

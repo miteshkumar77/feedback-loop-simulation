@@ -1,0 +1,8 @@
+Proposer
+  while not decided:
+    prepare(n) : monotonically increasing n
+    set n as the highest n_a, n seen so far from prepare_ok responses
+    if prepare_ok(n, n_a, v_a) from a majority:
+      if v_a was not null from a prepare_ok, set proposed value to v_a, otherwise keep it the same
+      accept(n, v)
+      

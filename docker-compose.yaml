@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  be1:
+    image: be:latest
+    environment:
+      - N=3
+  be2:
+    image: be:latest
+    environment:
+      - N=3
+  be3:
+    image: be:latest
+    environment:
+      - N=3
+  
