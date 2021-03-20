@@ -13,25 +13,28 @@ import (
 	pb "wcl.com/simulation/pxguide"
 )
 
-type server struct {
-	pb.UnimplementedPxGuideServer
-	mu    sync.Mutex
-	peers []string
-	done  bool
-}
-
 type Acceptor struct {
-	mu sync.Mutex
-	nP int
-	nA int
-	vA interface{}
+	nP     int32
+	nA     int32
+	vA     interface{}
+	parent *server
 }
 
 type Proposer struct {
-	mu sync.Mutex
-	nP int
-	me int
-	vP interface{}
+	nP     int32
+	me     int
+	vP     interface{}
+	parent *server
+}
+
+type server struct {
+	pb.UnimplementedPxGuideServer
+	mu       sync.Mutex
+	peers    []string
+	me       int
+	done     bool
+	acceptor *Acceptor
+	proposer *Proposer
 }
 
 // func (s *server) Do(c context.Context, request *pb.DecidedArgs) (response *pb.DecidedReply, err error) {
@@ -44,12 +47,66 @@ type Proposer struct {
 
 // }
 
+func (p *Proposer) proposerLoop() {
+
+}
+
 func (s *server) Start(c context.Context, request *pb.StartArgs) (response *pb.StartReply, err error) {
+	if s.done == true {
+		return &pb.StartReply{
+			Ok: false,
+		}, nil
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.proposer != nil {
+		return &pb.StartReply{
+			Ok: true,
+		}, nil
+	}
+
+	s.proposer = &Proposer{
+		nP:     0,
+		me:     s.me,
+		vP:     request.V,
+		parent: s,
+	}
+
+	go s.proposer.proposerLoop()
+
+	return &pb.StartReply{
+		Ok: true,
+	}, nil
 
 }
 
 func (s *server) Prepare(c context.Context, request *pb.PrepareArgs) (response *pb.PrepareReply, err error) {
+	s.mu.Lock()
+	if s.acceptor == nil {
+		s.acceptor = &Acceptor{
+			nP: 0,
+			nA: 0,
+			vA: nil,
+		}
+	}
 
+	if request.N > s.acceptor.nP {
+		s.acceptor.nP = request.N
+		if s.acceptor.vA == nil {
+			return &pb.PrepareReply{
+				N:      request.N,
+				Na:     s.acceptor.nA,
+				Va:     "",
+				IsNull: true,
+			}, nil
+		}
+		return &pb.PrepareReply{
+			N:      request.N,
+			Na:     s.acceptor.nA,
+			Va:     fmt.Sprintf("%v", s.acceptor.vA),
+			IsNull: false,
+		}, nil
+	}
 }
 
 func (s *server) Accept(c context.Context, request *pb.AcceptArgs) (response *pb.AcceptReply, err error) {

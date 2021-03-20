@@ -31,7 +31,9 @@ service PxGuide {
 
 /* ------ Argument Types ------ */
 
-message StartArgs {}
+message StartArgs {
+  string V = 1;
+}
 
 message PrepareArgs {
   int32 N = 1; 
@@ -39,7 +41,6 @@ message PrepareArgs {
 
 message AcceptArgs {
   int32 N = 1;
-  string V = 2;
 }
 
 message DecidedArgs {
@@ -57,6 +58,7 @@ message PrepareReply {
   int32 N = 2;
   int32 Na = 3;
   string Va = 4;
+  bool IsNull = 5;
 }
 
 message AcceptReply {
