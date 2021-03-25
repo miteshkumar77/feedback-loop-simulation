@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"net"
 	"sync"
@@ -82,6 +83,7 @@ func (s *server) Start(c context.Context, request *pb.StartArgs) (response *pb.S
 
 func (s *server) Prepare(c context.Context, request *pb.PrepareArgs) (response *pb.PrepareReply, err error) {
 	s.mu.Lock()
+	defer s.mu.Unlock()
 	if s.acceptor == nil {
 		s.acceptor = &Acceptor{
 			nP: 0,
@@ -98,6 +100,7 @@ func (s *server) Prepare(c context.Context, request *pb.PrepareArgs) (response *
 				Na:     s.acceptor.nA,
 				Va:     "",
 				IsNull: true,
+				Failed: false,
 			}, nil
 		}
 		return &pb.PrepareReply{
@@ -105,16 +108,45 @@ func (s *server) Prepare(c context.Context, request *pb.PrepareArgs) (response *
 			Na:     s.acceptor.nA,
 			Va:     fmt.Sprintf("%v", s.acceptor.vA),
 			IsNull: false,
+			Failed: false,
+		}, nil
+	} else {
+		return &pb.PrepareReply{
+			N:      s.acceptor.nP,
+			Failed: true,
 		}, nil
 	}
 }
 
 func (s *server) Accept(c context.Context, request *pb.AcceptArgs) (response *pb.AcceptReply, err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.acceptor == nil {
+		log.Fatalf("-- %d -- Acceptor data was not found!!!\n", s.me)
+		return &pb.AcceptReply{
+			Failed: true,
+		}, nil
+	}
 
+	if request.N >= s.acceptor.nP {
+		s.acceptor.nP = request.N
+		s.acceptor.nA = request.N
+		s.acceptor.vA = request.V
+		return &pb.AcceptReply{
+			N:      request.N,
+			Failed: false,
+		}, nil
+	} else {
+		return &pb.AcceptReply{
+			N:      request.N,
+			Failed: true,
+		}, nil
+	}
 }
 
 func (s *server) Decided(c context.Context, request *pb.DecidedArgs) (response *pb.DecidedReply, err error) {
-
+	s.mu.Lock()
+	defer s.mu.Unlock()
 }
 
 type RealTimeProofParams struct {

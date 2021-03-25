@@ -25,7 +25,6 @@ service PxGuide {
   rpc Accept(AcceptArgs) returns (AcceptReply) {}
 
   rpc Decided(DecidedArgs) returns (DecidedReply) {}
-  // rpc Do(DecidedArgs) returns (DecidedReply) {}
 }
 
 
@@ -41,6 +40,7 @@ message PrepareArgs {
 
 message AcceptArgs {
   int32 N = 1;
+  string V = 2;
 }
 
 message DecidedArgs {
@@ -59,11 +59,13 @@ message PrepareReply {
   int32 Na = 3;
   string Va = 4;
   bool IsNull = 5;
+  bool Failed = 6;
 }
 
 message AcceptReply {
   bool Ok = 1;
   int32 N = 2;
+  bool Failed = 3;
 }
 
 message DecidedReply {
