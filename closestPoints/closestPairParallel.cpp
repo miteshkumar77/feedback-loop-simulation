@@ -75,7 +75,7 @@ std::array<Point, 2> closestPairDivC(const std::vector<Point> &Px,
   }
 
   double center = ((double)Px[mid].x + Px[mid + 1].x) / 2;
-
+ 
   std::vector<int> strip = getStrip(Px, Py, center, d);
 
   for (int i = 0; i < strip.size(); ++i) {
@@ -177,13 +177,20 @@ int main(int argc, char **argv) {
   for (size_t i = 0; i < N; ++i) {
     Py[i] = i;
   }
-
+  int tag = 123;
+  MPI_DOUBLE d;
+  MPI_DOUBLE ownd;
+  MPI_DOUBLE recvd;
   std::sort(Py.begin(), Py.end(),
             [&](int a, int b) -> bool { return Px[a].y < Px[b].y; });
-  closestPair(Px, Py); 
+  std::array<Point, 2> res = closestPair(Px, Py);
+  ownd = dist(res[0], res[1]);
   for (unsigned long long int i = 1; i <= numranks;) { 
     i <<= 1;
-     
+    if (myrank % k == 0 && myrank + 1 != numranks) {
+      MPI_Recv(&recvd, 1, MPI_DOUBLE, myrank + (i>>1) + myrank, tag,
+               MPI_COMM_WORLD, MPI_STATUS_IGNORE);MPI_STATUS_IGNORE
+    }
   }
 
   // int N;
