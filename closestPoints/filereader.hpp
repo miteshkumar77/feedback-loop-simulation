@@ -6,7 +6,7 @@
 #include <climits>
 #include <cmath>
 #include <iostream>
-#include <mpi/mpi.h>
+#include <mpi.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -24,7 +24,7 @@ struct Point {
 };
 
 namespace FReaderUtil {
-char errorString[MPI_MAX_ERROR_STRING];
+
 void readPx(char *fname, int me, int numranks, std::vector<Point> &ret);
 } // namespace FReaderUtil
 #endif // <<< FILEREADER_HPP

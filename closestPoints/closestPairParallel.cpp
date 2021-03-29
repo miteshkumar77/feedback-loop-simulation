@@ -4,11 +4,10 @@
 #include <climits>
 #include <cmath>
 #include <iostream>
-#include <mpi/mpi.h>
+#include <mpi.h>
 #include <string>
 #include <utility>
 #include <vector>
-#include <mpi/mpi.h>
 int myrank, numranks;
 
 double dist(const Point &p1, const Point &p2);
@@ -21,18 +20,6 @@ std::pair<std::vector<int>, std::vector<int>> divide(const std::vector<int> &Py,
                                                      int mid);
 std::vector<int> getStrip(const std::vector<Point> &Px,
                           const std::vector<int> &Py, double center, double d);
-
-// struct Point {
-
-//   Point() : x(0), y(0) {}
-
-//   Point(int x, int y) : x(x), y(y) {}
-
-//   bool operator==(const Point &p) { return x == p.x && y == p.y; }
-
-//   int x;
-//   int y;
-// };
 
 std::array<Point, 2> closestPairBruteForce(const std::vector<Point> &points,
                                            int l, int r) {
@@ -75,7 +62,7 @@ std::array<Point, 2> closestPairDivC(const std::vector<Point> &Px,
   }
 
   double center = ((double)Px[mid].x + Px[mid + 1].x) / 2;
- 
+
   std::vector<int> strip = getStrip(Px, Py, center, d);
 
   for (int i = 0; i < strip.size(); ++i) {
@@ -144,17 +131,6 @@ std::array<Point, 2> closestPair(std::vector<Point> points) {
 }
 std::array<Point, 2> closestPair(const std::vector<Point> &Px,
                                  const std::vector<int> &Py) {
-  // sort(points.begin(), points.end(),
-  //      [](const Point &a, const Point &b) -> bool { return a.x < b.x; });
-
-  // std::vector<int> Py(points.size());
-
-  // for (int i = 0; i < points.size(); ++i) {
-  //   Py[i] = i;
-  // }
-
-  // std::sort(Py.begin(), Py.end(),
-  //           [&](int a, int b) -> bool { return points[a].y < points[b].y; });
 
   return closestPairDivC(Px, Py, 0, Px.size() - 1);
 }
@@ -170,47 +146,39 @@ int main(int argc, char **argv) {
   }
 
   std::vector<Point> Px;
-
+  std::cout << "Reading file..." << std::endl;
   FReaderUtil::readPx(argv[1], myrank, numranks, Px);
+  std::cout << "Finished reading file..." << std::endl;
   size_t N = Px.size();
   std::vector<int> Py(N);
   for (size_t i = 0; i < N; ++i) {
     Py[i] = i;
   }
   int tag = 123;
-  MPI_DOUBLE d;
-  MPI_DOUBLE ownd;
-  MPI_DOUBLE recvd;
+
+  double d;
+  double ownd;
+  double recvd;
+  std::cout << "Computing local closest pair..." << std::endl;
   std::sort(Py.begin(), Py.end(),
             [&](int a, int b) -> bool { return Px[a].y < Px[b].y; });
   std::array<Point, 2> res = closestPair(Px, Py);
+  std::cout << "Computed local closest pair..." << std::endl;
   ownd = dist(res[0], res[1]);
-  for (unsigned long long int i = 1; i <= numranks;) { 
+  bool wasrecv = true;
+  for (unsigned long long int i = 1; i <= numranks;) {
     i <<= 1;
-    if (myrank % k == 0 && myrank + 1 != numranks) {
-      MPI_Recv(&recvd, 1, MPI_DOUBLE, myrank + (i>>1) + myrank, tag,
-               MPI_COMM_WORLD, MPI_STATUS_IGNORE);MPI_STATUS_IGNORE
+    if (myrank % i == 0 && myrank + (i >> 1) < numranks) {
+      MPI_Recv(&recvd, 1, MPI_DOUBLE, myrank + (i >> 1), tag, MPI_COMM_WORLD,
+               MPI_STATUS_IGNORE);
+      d = std::min(ownd, recvd);
+    } else if (myrank >= (i >> 1) && ((myrank - (i >> 1)) % i) == 0) {
+      MPI_Send(&ownd, 1, MPI_DOUBLE, myrank - (i >> 1), tag, MPI_COMM_WORLD);
     }
   }
-
-  // int N;
-  // cin >> N;
-
-  // vector<Point> points;
-  // points.reserve(N);
-
-  // for (int i = 0; i < N; ++i) {
-  //   Point p;
-  //   cin >> p.x >> p.y;
-  //   points.push_back(p);
-  // }
-  // auto ans = closestPair(points);
-  // auto expectedans = closestPairBruteForce(points, 0, points.size() - 1);
-  // cout << "ANSWER:   (" << ans[0].x << "," << ans[0].y << "); (" << ans[1].x
-  //      << "," << ans[1].y << ")" << endl;
-  // cout << "EXPECTED: (" << expectedans[0].x << "," << expectedans[0].y << ");
-  // ("
-  //      << expectedans[1].x << "," << expectedans[1].y << ")" << endl;
-
-  // return 0;
+  if (myrank == 0) {
+    printf("RESULT: %lf\n", d);
+  }
+  MPI_Finalize();
+  return EXIT_SUCCESS;
 }

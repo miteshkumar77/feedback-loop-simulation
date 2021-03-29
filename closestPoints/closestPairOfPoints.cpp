@@ -2,11 +2,14 @@
 #include <array>
 #include <climits>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <utility>
 #include <vector>
-
 using namespace std;
 
 struct Point;
@@ -138,24 +141,39 @@ array<Point, 2> closestPair(vector<Point> points) {
   return closestPairDivC(points, Py, 0, points.size() - 1);
 }
 
-int main() {
-  int N;
-  cin >> N;
+int main(int argc, char **argv) {
 
-  vector<Point> points;
-  points.reserve(N);
-
-  for (int i = 0; i < N; ++i) {
-    Point p;
-    cin >> p.x >> p.y;
-    points.push_back(p);
+  if (argc != 2) {
+    std::cerr << "ERROR: invalid file" << std::endl;
+    return EXIT_FAILURE;
   }
-  auto ans = closestPair(points);
-  auto expectedans = closestPairBruteForce(points, 0, points.size() - 1);
-  cout << "ANSWER:   (" << ans[0].x << "," << ans[0].y << "); (" << ans[1].x
-       << "," << ans[1].y << ")" << endl;
-  cout << "EXPECTED: (" << expectedans[0].x << "," << expectedans[0].y << "); ("
-       << expectedans[1].x << "," << expectedans[1].y << ")" << endl;
+  struct stat st;
+  if (-1 == lstat(*(argv + 1), &st)) {
+    std::cerr << "ERROR: invalid faile" << std::endl;
+    return EXIT_FAILURE;
+  }
 
+  size_t sz = st.st_size / sizeof(Point);
+  std::ifstream ifs(*(argv + 1), ios::in | ios::binary);
+  if (!ifs.good()) {
+    std::cerr << "ERROR: invalid file" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  vector<Point> points(sz);
+  ifs.read((char *)&points[0], sz * sizeof(Point));
+  std::cout << points.size() << std::endl;
+  // for (const auto &p : points) {
+  //   std::cout << p.x << ' ' << p.y << std::endl;
+  // }
+  auto ans = closestPair(points);
+  // auto expectedans = closestPairBruteForce(points, 0, points.size() - 1);
+  // cout << "ANSWER:   (" << ans[0].x << "," << ans[0].y << "); (" << ans[1].x
+  //      << "," << ans[1].y << ")" << endl;
+  // cout << "EXPECTED: (" << expectedans[0].x << "," << expectedans[0].y << ");
+  // ("
+  //      << expectedans[1].x << "," << expectedans[1].y << ")" << endl;
+  cout << "ANSWER: " << dist(ans[0], ans[1]) << endl;
+  // cout << "EXPECTED: " << dist(expectedans[0], expectedans[1]) << endl;
   return 0;
 }

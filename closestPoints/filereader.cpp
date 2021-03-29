@@ -1,5 +1,4 @@
 #include "filereader.hpp"
-
 char errorString[MPI_MAX_ERROR_STRING];
 int errorLen;
 void FReaderUtil::readPx(char *fname, int me, int numranks,
@@ -29,21 +28,22 @@ void FReaderUtil::readPx(char *fname, int me, int numranks,
   MPI_Offset byte_delta = sizeof(Point) * (num_points / (MPI_Offset)numranks);
   MPI_Offset byte_ofs = byte_delta * me;
   MPI_Offset read_bytes = (me + 1 == numranks ? fsize - byte_ofs : byte_delta);
-
-  char *data = (char *)malloc(read_bytes * sizeof(Point));
+  std::cout << "ALLOCING DATA: " << std::endl;
+  char *data = (char *)malloc(read_bytes);
   if (data == NULL) {
     fprintf(stderr, "ERROR RANK %d: malloc() failed\n");
     exit(EXIT_FAILURE);
   }
 
   rc = MPI_File_read_at(fh, byte_ofs, data, read_bytes, MPI_CHAR, NULL);
+
   if (rc != 0) {
     MPI_Error_string(rc, errorString, &errorLen);
     fprintf(stderr,
             "ERROR RANK %d: MPI_File_read_at() failed with code (%d) --- %s\n",
             me, rc, errorString);
   }
-
+  std::cout << "Read bytes" << std::endl;
   rc = MPI_File_close(&fh);
   if (rc != 0) {
     MPI_Error_string(rc, errorString, &errorLen);
@@ -51,7 +51,8 @@ void FReaderUtil::readPx(char *fname, int me, int numranks,
             "ERROR RANK %d: MPI_File_close() failed with code (%d) --- %s\n",
             me, rc, errorString);
   }
-  data = NULL;
 
-  ret.assign(data, data + read_bytes);
+  ret.assign((Point *)data, (Point *)(data + read_bytes));
+  std::cout << "Data Assigned" << std::endl;
+  data = NULL;
 }
