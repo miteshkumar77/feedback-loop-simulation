@@ -156,7 +156,6 @@ int main(int argc, char **argv) {
   }
   int tag = 123;
 
-  double d;
   double ownd;
   double recvd;
   std::cout << "Computing local closest pair..." << std::endl;
@@ -171,7 +170,7 @@ int main(int argc, char **argv) {
     if (myrank % i == 0 && myrank + (i >> 1) < numranks) {
       MPI_Recv(&recvd, 1, MPI_DOUBLE, myrank + (i >> 1), tag, MPI_COMM_WORLD,
                MPI_STATUS_IGNORE);
-      d = std::min(ownd, recvd);
+      ownd = std::min(ownd, recvd);
     } else if (myrank >= (i >> 1) && ((myrank - (i >> 1)) % i) == 0) {
       MPI_Send(&ownd, 1, MPI_DOUBLE, myrank - (i >> 1), tag, MPI_COMM_WORLD);
     }
