@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <mpi/mpi.h>
 int myrank, numranks;
 
 double dist(const Point &p1, const Point &p2);
@@ -21,17 +22,17 @@ std::pair<std::vector<int>, std::vector<int>> divide(const std::vector<int> &Py,
 std::vector<int> getStrip(const std::vector<Point> &Px,
                           const std::vector<int> &Py, double center, double d);
 
-struct Point {
+// struct Point {
 
-  Point() : x(0), y(0) {}
+//   Point() : x(0), y(0) {}
 
-  Point(int x, int y) : x(x), y(y) {}
+//   Point(int x, int y) : x(x), y(y) {}
 
-  bool operator==(const Point &p) { return x == p.x && y == p.y; }
+//   bool operator==(const Point &p) { return x == p.x && y == p.y; }
 
-  int x;
-  int y;
-};
+//   int x;
+//   int y;
+// };
 
 std::array<Point, 2> closestPairBruteForce(const std::vector<Point> &points,
                                            int l, int r) {
@@ -159,7 +160,6 @@ std::array<Point, 2> closestPair(const std::vector<Point> &Px,
 }
 
 int main(int argc, char **argv) {
-
   // Initialize MPI
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
@@ -180,8 +180,10 @@ int main(int argc, char **argv) {
 
   std::sort(Py.begin(), Py.end(),
             [&](int a, int b) -> bool { return Px[a].y < Px[b].y; });
-
-  for (unsigned long long int i = 2; i <= numranks; i <<= 1) {
+  closestPair(Px, Py); 
+  for (unsigned long long int i = 1; i <= numranks;) { 
+    i <<= 1;
+     
   }
 
   // int N;
